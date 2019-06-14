@@ -8,10 +8,12 @@
 import os
 from os.path import join as pjoin
 from setuptools import setup
-from distutils.extension import Extension
-from Cython.Distutils import build_ext
+# from distutils.extension import Extension
+# from Cython.Distutils import build_ext
+# import numpy as np
+from distutils.core import setup, Extension
+from Cython.Build import cythonize
 import numpy as np
-
 
 def find_in_path(name, path):
     "Find a file in a search path"
@@ -161,9 +163,14 @@ else:
     print('Skipping GPU_NMS')
 
 
+# setup(
+#     name='frcnn_cython',
+#     ext_modules=ext_modules,
+#     # inject our custom trigger
+#     cmdclass={'build_ext': custom_build_ext},
+# )
+
 setup(
-    name='frcnn_cython',
-    ext_modules=ext_modules,
-    # inject our custom trigger
-    cmdclass={'build_ext': custom_build_ext},
+    ext_modules=cythonize(["bbox.pyx", "anchors.pyx", "cpu_nms.pyx"]),
+    include_dirs=[numpy.get_include()]
 )
